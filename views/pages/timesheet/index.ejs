@@ -1,0 +1,80 @@
+<h1>My Timesheet</h1>
+<br />
+<h2>
+    Submit New Clock In / Clock Out
+</h2>
+<form method="post" action="/timesheetStore">
+    
+    <fieldset class="form-group">
+    <div class="row">
+        <legend class="col-form-label col-sm-2 pt-0">Option:</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type" value="in">
+                <label class="form-check-label" for="gridRadios1">
+                    Clock In
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type" value="out">
+                <label class="form-check-label" for="gridRadios1">
+                    Clock Out
+                </label>
+            </div>
+        </div>
+    </div>
+    </fieldset>
+
+    <br />
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <label>Notes</label>
+            <textarea name="notes" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <br />
+    <div class="form-group row">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+</form>
+<br />
+<h2>
+    My Timesheet History
+</h2>
+<table class=" table table-striped">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>User</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Time</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <%
+            timesheets.forEach(
+                (timesheet) => {
+                    %>
+                        <tr>
+                            <td><%= timesheet.id %></td>
+                            <td><%= timesheet.user_id %></td>
+                            <td><%= timesheet.clock_in_out_date %></td>
+                            <td><%= timesheet.clock_in_out_type %></td>
+                            <td><%= timesheet.clock_in_out_time %></td>
+                            <td><%= timesheet.notes %></td>
+                            <td>
+                                <a href="/timesheetEdit/<%= timesheet.id %>" class="btn btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                    <%
+                }
+            )
+        
+        %>
+    </tbody>
+</table>
