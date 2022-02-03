@@ -256,7 +256,8 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     onlyAllowOrigins: [
-      'https://fullstack-timesheet.herokuapp.com/',
+      process.env.APP_URL,
+      // 'https://fullstack-timesheet.herokuapp.com/',
     //   'https://staging.example.com',
     ],
 
