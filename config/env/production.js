@@ -47,13 +47,13 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     default: {
-      // adapter: 'sails-postgresql',
+      adapter: 'sails-postgresql',
       // host: 'localhost',
       // port: 5432,
       // user: 'postgres',
       // password: 'postgres',
       // database: 'timesheet'
-      // url: 'mysql://user:password@host:port/database',
+      url: process.env.DATABASE_URL,
       //--------------------------------------------------------------------------
       //  /\   To avoid checking it in to version control, you might opt to set
       //  ||   sensitive credentials like `url` using an environment variable.
@@ -255,10 +255,10 @@ module.exports = {
     * > Be sure to use the right protocol!  ("http://" vs. "https://")         *
     *                                                                          *
     ***************************************************************************/
-    // onlyAllowOrigins: [
-    //   'https://example.com',
+    onlyAllowOrigins: [
+      'https://fullstack-timesheet.herokuapp.com/',
     //   'https://staging.example.com',
-    // ],
+    ],
 
 
     /***************************************************************************
@@ -330,7 +330,7 @@ module.exports = {
     * (https://sailsjs.com/config/http)                                        *
     *                                                                          *
     ***************************************************************************/
-    // trustProxy: true,
+    trustProxy: true,
 
   },
 
