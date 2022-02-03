@@ -17,6 +17,7 @@
     "sails-hook-sockets": "^2.0.0",
     "sails-mysql": "^2.0.0",
     "sails-postgresql": "^4.0.0",
+    "serve": "^13.0.2",
     "yarn": "^1.22.17"
   },
   "devDependencies": {
@@ -27,7 +28,7 @@
     "supertest": "^6.2.2"
   },
   "scripts": {
-    "start": "NODE_ENV=production node app.js",
+    "start": "serve -s build",
     "test": "npm run lint && npm run custom-tests && echo 'Done.'",
     "lint": "./node_modules/eslint/bin/eslint.js . --max-warnings=0 --report-unused-disable-directives && echo '✔  Your .js files look good.'",
     "custom-tests": "echo \"(No other custom tests yet.)\" && echo"
