@@ -12,6 +12,10 @@ module.exports = {
       type: 'string',
       allowNull: false,
     },
+    email: {
+      type: 'string',
+      allowNull: false,
+    },
     password: {
       type: 'string',
       allowNull: false,

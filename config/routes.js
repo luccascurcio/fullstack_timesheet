@@ -19,12 +19,22 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': { view: 'pages/homepage' },
-  // '/timesheetEdit/:id': { view: 'pages/timesheet/edit' },
+  //Controller Routes
+  '/': 'SessionController.open',
+  '/signin': 'SessionController.open',
+  '/session/create/:email': 'SessionController.create',
+  
+  '/home': 'UsersController.show',
+  '/users/store': 'UsersController.store',
+  
   '/timesheetIndex': 'TimesheetController.index',
   '/timesheetStore': 'TimesheetController.store',
-  '/timesheetUpdate': 'TimesheetController.update',
+  '/timesheetUpdate/:id': 'TimesheetController.update',
   '/timesheetEdit/:id': 'TimesheetController.edit',
+
+  //View Routes
+  '/signup': { view: 'pages/login/signup' },
+  '/loginError': { view: 'pages/login/error' },
 
 
   /***************************************************************************

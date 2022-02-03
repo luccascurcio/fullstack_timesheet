@@ -17,6 +17,15 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  // '*': true,
+  session: {
+    open: true,
+    create: true,
+    '*': 'auth',
+  },
+  users: {
+    store: true,
+    '*': 'auth',
+  },
+  '*': 'auth',
 
 };

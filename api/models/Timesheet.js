@@ -10,26 +10,19 @@ module.exports = {
   attributes: {
 
     user_id: {
-      type: 'integer',
+      type: 'number',
       allowNull: false,
     },
-    clock_in_out_date: {
+    clock_in_out_datetime: {
       type: 'string',
+      columnType: 'timestamp',
       allowNull: false,
     },
     clock_in_out_type: {
       type: 'string',
       allowNull: false,
-      isIn: [ 'in','out' ],
+      isIn: [ 'Clock In','Clock Out' ],
     },
-    clock_in_out_time: {
-      type: 'string',
-      allowNull: false,
-    },
-    notes: {
-      type: 'string',
-      allowNull: true,
-    }
   },
   datastore: 'default',
 
