@@ -4,6 +4,7 @@
  * @description :: Server-side actions for handling incoming requests.
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
+const moment = require('moment')
 
 module.exports =  {
     index: async function(req, res){
@@ -12,13 +13,20 @@ module.exports =  {
         const timesheets = await Timesheet.find( { user_id } )
         let last_clock_type = ''
 
+        //check latest type of clock
         if(timesheets.length > 0) {
             last_clock_type = timesheets[timesheets.length-1].clock_in_out_type
         } else {
             last_clock_type = 'Clock Out'
         }
 
-        sortedTimesheets = timesheets.sort( (x, y) => x.clock_in_out_datetime > arguments.clock_in_out_datetime ? 1 : -1 )
+        //format date / time to show in index page
+        timesheets.forEach(
+            (x) => x.clock_in_out_datetime = ( x.clock_in_out_datetime.substr(0,10) + ' ' + x.clock_in_out_datetime.substr(11,8))
+        )
+        
+        //sort list of timesheet
+        sortedTimesheets = timesheets.sort( (x, y) => x.clock_in_out_datetime > y.clock_in_out_datetime ? -1 : 1 )
 
         res.view('pages/timesheet/index', { timesheets: sortedTimesheets , last_clock_type } );
         
@@ -26,7 +34,7 @@ module.exports =  {
     
     store: async function(req, res){
         const type = req.body.type;
-        const datetime = new Date();
+        const datetime = moment(new Date()).format()
         const user_id = req.session.User.id;
 
         const timesheet = await Timesheet.create({
@@ -35,8 +43,6 @@ module.exports =  {
             clock_in_out_type: type,
         })
 
-        console.log(timesheet)
-        
         res.status(200)
         res.redirect('timesheetIndex')
     },
@@ -44,7 +50,7 @@ module.exports =  {
     edit: async function(req, res){
         const timesheet = await Timesheet.findOne({id: req.params.id})
             
-        const datetime = timesheet.clock_in_out_datetime
+        const datetime = new Date(timesheet.clock_in_out_datetime)
         const date = datetime.getFullYear() + '-' + String(datetime.getMonth()+1).padStart(2, '0') + '-' + String(datetime.getDate()).padStart(2, '0')
         const time = String(datetime.getHours()).padStart(2, '0') + ":" + String(datetime.getMinutes()).padStart(2, '0') + ":" + String(datetime.getSeconds()).padStart(2, '0')
         
@@ -52,20 +58,50 @@ module.exports =  {
     },
 
     update: async function(req, res){
-        const user_id = req.session.User.id;
+        
+        //build new datetime edited by user
         const date = req.body.date;
         const time = req.body.time;
         const splitedDate = date.split('-')
         const splitedTime = time.split(':')
 
-        const newDateTime = new Date(Date.UTC(  parseFloat(splitedDate[0]),     //year
-                                                parseFloat(splitedDate[1])-1,   //month
-                                                parseFloat(splitedDate[2]),     //day
-                                                parseFloat(splitedTime[0]),     //hour
-                                                parseFloat(splitedTime[1]),     //minute
-                                                parseFloat(splitedTime[2]),     //seconds
-                                                0));
+        const newDateTime = moment(new Date(parseFloat(splitedDate[0]),     //year
+                                            parseFloat(splitedDate[1])-1,   //month
+                                            parseFloat(splitedDate[2]),     //day
+                                            parseFloat(splitedTime[0]),     //hour
+                                            parseFloat(splitedTime[1]),     //minute
+                                            parseFloat(splitedTime[2]),     //seconds
+                                            0)).format()
         
+        //valid with previous datetime                                            
+        const previousTimesheet = await Timesheet.findOne({id: (Number(req.params.id)-1)})
+
+        if (previousTimesheet) {
+
+            previousDateTime = moment(new Date(previousTimesheet.clock_in_out_datetime)).format()
+            
+            if (previousDateTime > newDateTime) {
+                //previous time cannot be higher than new time. In this case, throw error.
+                res.view('pages/timesheet/error', {id: req.params.id, error: 'You are trying to set a lower time than the previous Clock. You must either edit to be a later time than the previous one, or fix the previous times in cascade.'})
+                return;
+            }
+        }
+        
+        //valid with next datetime
+        const nextTimesheet = await Timesheet.findOne({id: (Number(req.params.id)+1)})
+
+        if (nextTimesheet) {
+
+            nextDateTime = moment(new Date(nextTimesheet.clock_in_out_datetime)).format()
+            
+            if (nextDateTime < newDateTime) {
+                //next time cannot be lower than new time. In this case, throw error.
+                res.view('pages/timesheet/error', {id: req.params.id, error: 'You are trying to set a higher time than the next Clock. You must either edit to be a later time than the next one, or fix the next times in cascade.'})
+                return;
+            }
+        }
+
+        //commit modification
         timesheet = await Timesheet.update({id: req.params.id}, {clock_in_out_datetime: newDateTime })
         
         res.redirect('/timesheetIndex')

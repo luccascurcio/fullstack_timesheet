@@ -15,7 +15,6 @@ module.exports = {
     },
     clock_in_out_datetime: {
       type: 'string',
-      columnType: 'timestamp',
       allowNull: false,
     },
     clock_in_out_type: {
